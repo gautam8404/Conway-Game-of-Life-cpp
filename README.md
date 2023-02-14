@@ -11,7 +11,7 @@ cd Conway-Game-of-Life-cpp
 mkdir build
 cd build
 cmake ..
-cmake --build .
+make
 ```
 
 ### Build using g++
