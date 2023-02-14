@@ -40,6 +40,7 @@ double lastUpdate = 0.0;
 // controls
 bool paused = true;
 bool showedControlsAtStart = false;
+bool showLines = false;
 
 // Function Prototypes
 
@@ -48,7 +49,9 @@ void ShowControls();
 int countNeighbours();
 void updateGrid();
 void drawGrid();
-void ToggleCellState(Vector2 mouse);
+void drawGridLines();
+void UpdateDraw();
+void ToggleCellState(Vector2 mouse, Cell state);
 Cell RandomEnum();
 void updateControls();
 void GliderGun();
@@ -74,23 +77,12 @@ int main() {
         updateControls();
 
         if (!paused && GetTime() - lastUpdate > updateInterval) {
-            BeginDrawing();
-            {
-                ClearBackground(WHITE);
-                updateGrid();
-                drawGrid();
-
-            }
-            EndDrawing();
+            updateGrid();
+            UpdateDraw();
             lastUpdate = GetTime();
         }
         else {
-            BeginDrawing();
-            {
-                ClearBackground(WHITE);
-                drawGrid();
-            }
-            EndDrawing();
+            UpdateDraw();
         }
     }
 
@@ -100,6 +92,18 @@ int main() {
 }
 
 // Function Definitions
+
+void UpdateDraw(){
+    BeginDrawing();
+    {
+        ClearBackground(WHITE);
+        if (showLines) {
+            drawGridLines();
+        }
+        drawGrid();
+    }
+    EndDrawing();
+}
 
 Cell RandomEnum(){
     if (GetRandomValue(0,1)){
@@ -186,18 +190,24 @@ void drawGrid(){
     }
 }
 
-void ToggleCellState(Vector2 mouse){
+void drawGridLines(){
+    for (int x = 0; x <= cellCountX; x++){
+        DrawLine(x*cellSize, 0, x*cellSize, screenHeight, GRAY);
+    }
+
+    for (int y = 0; y <= cellCountY; y++){
+        DrawLine(0, y*cellSize, screenWidth, y*cellSize, GRAY);
+    }
+}
+
+void ToggleCellState(Vector2 mouse, Cell state) {
     unsigned int x = (unsigned int) mouse.x / cellSize;
-    unsigned int y = (unsigned int) mouse.y / cellSize ;
+    unsigned int y = (unsigned int) mouse.y / cellSize;
 
 
-    if (paused) {
-        if (grid[x][y] == DEAD) {
-            grid[x][y] = ALIVE;
-            return;
-        } else {
-            grid[x][y] = DEAD;
-        }
+    if (paused && x < cellCountX && y < cellCountY) {
+        grid[x][y] = state;
+        return;
     }
 }
 
@@ -248,16 +258,18 @@ void ShowControls(){
         ClearBackground(WHITE);
         DrawText("Controls:", 10, 10, 20, BLACK);
         DrawText("Space: Pause/Unpause", 10, 40, 20, BLACK);
-        DrawText("Left Mouse Button: Toggle Cell State", 10, 70, 20, BLACK);
-        DrawText("S: Slow down", 10, 100, 20, BLACK);
-        DrawText("F: Speed up", 10, 130, 20, BLACK);
-        DrawText("D: Default speed", 10, 160, 20, BLACK);
-        DrawText("R: Randomize", 10, 190, 20, BLACK);
-        DrawText("G: Glider Gun", 10, 220, 20, BLACK);
-        DrawText("C: Clear", 10, 250, 20, BLACK);
-        DrawText("Esc: Exit", 10, 280, 20, BLACK);
-        DrawText("Hold H: Show/Hide this menu", 10, 310, 20, BLACK);
-        DrawText("Press H to start. Enjoy!", 10, 340, 20, BLACK);
+        DrawText("Press/Hold Left Mouse Button: Cell Alive", 10, 70, 20, BLACK);
+        DrawText("Press/Hold Right Mouse Button: Cell Dead", 10, 100, 20, BLACK);
+        DrawText("T: Toggle Grid Lines", 10, 130, 20, BLACK);
+        DrawText("S: Slow down", 10, 160, 20, BLACK);
+        DrawText("F: Speed up", 10, 190, 20, BLACK);
+        DrawText("D: Default speed", 10, 220, 20, BLACK);
+        DrawText("R: Randomize", 10, 250, 20, BLACK);
+        DrawText("G: Glider Gun", 10, 280, 20, BLACK);
+        DrawText("C: Clear", 10, 310, 20, BLACK);
+        DrawText("Esc: Exit", 10, 340, 20, BLACK);
+        DrawText("Hold H: Show/Hide this menu", 10, 370, 20, BLACK);
+        DrawText("Press H to start. Enjoy!", 10, 400, 20, BLACK);
     } EndDrawing();
 }
 
@@ -267,12 +279,19 @@ void updateControls(){
         std::cout << "Toggled pause state to:" << paused << std::endl;
     }
 
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
         Vector2 mouse = GetMousePosition();
-        ToggleCellState(mouse);
-
+        ToggleCellState(mouse, ALIVE);
     }
 
+    if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON)) {
+        Vector2 mouse = GetMousePosition();
+        ToggleCellState(mouse, DEAD);
+    }
+
+    if (IsKeyPressed(KEY_T)){
+        showLines = !showLines;
+    }
 
     if (IsKeyPressed(KEY_S)){
         updateInterval += updateIntervalStep;
