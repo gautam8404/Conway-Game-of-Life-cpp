@@ -11,7 +11,7 @@ cd Conway-Game-of-Life-cpp
 mkdir build
 cd build
 cmake ..
-cmake --build .
+make
 ```
 
 ### Build using g++
@@ -25,13 +25,11 @@ g++ -std=c++17 -o game-of-life main.cpp -lraylib
 
 ### Controls
 
--  Press/Hold Left Mouse Button: Cell Alive
--  Press/Hold Right Mouse Button: Cell Dead
--  Space: Pause
--  T: Toggle Grid Lines
--  C: Clear
--  S: Slow Down
--  F: Speed Up
--  D: Default Speed
--  R: Randomize
--  G: GliderGun
+-  Left Click to toggle cell state
+-  Space to Pause
+-  C to Clear
+-  S to Slow Down
+-  F to Speed Up
+-  D to Default Speed
+-  R to Randomize
+-  G for GliderGun
