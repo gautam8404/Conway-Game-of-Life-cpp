@@ -58,7 +58,6 @@ void GliderGun();
 
 // Main Function
 
-
 int main() {
     InitWindow(screenWidth, screenHeight, title);
     SetTargetFPS(60);
@@ -67,12 +66,6 @@ int main() {
 
 
     while (!WindowShouldClose()) {
-        if (!showedControlsAtStart) {
-            while (!IsKeyPressed(KEY_H)){
-                ShowControls();
-            }
-            showedControlsAtStart = true;
-        }
 
         updateControls();
 
@@ -274,8 +267,20 @@ void ShowControls(){
 }
 
 void updateControls(){
+    if (!showedControlsAtStart) {
+        while (!IsKeyPressed(KEY_H)) {
+            if (WindowShouldClose()) {
+                CloseWindow();
+                exit(0);
+            }
+            ShowControls();
+        }
+        showedControlsAtStart = true;
+    }
+
     if (IsKeyPressed(KEY_SPACE)) {
         paused = !paused;
+        SetWindowTitle(paused ? "Conway's Game of Life - Paused" : "Conway's Game of Life");
         std::cout << "Toggled pause state to:" << paused << std::endl;
     }
 
