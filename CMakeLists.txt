@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.2)
 project(Conway_s_Game_of_Life)
 
 set(CMAKE_CXX_STANDARD 17)
